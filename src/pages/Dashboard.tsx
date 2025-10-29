@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   User,
   Settings,
@@ -16,12 +17,88 @@ import {
   TrendingUp,
   Star,
   Menu,
+  Send,
 } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import TemplateCard from "@/components/TemplateCard";
+import ReviewCard from "@/components/ReviewCard";
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("profile");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedDepartment, setSelectedDepartment] = useState("all");
+  const [aiMessage, setAiMessage] = useState("");
+  const [aiChat, setAiChat] = useState<{ role: string; content: string }[]>([
+    { role: "assistant", content: "Hello! I'm your AI assistant. How can I help you build your portfolio today?" }
+  ]);
   const navigate = useNavigate();
+
+  const templates = [
+    {
+      title: "Mechanical Engineer Pro",
+      department: "Mechanical Engineering",
+      description: "Perfect for mechanical engineers with project showcases and technical skills",
+      rating: 4.8,
+      views: 1250
+    },
+    {
+      title: "EEE Specialist",
+      department: "Electrical Engineering (EEE)",
+      description: "Showcase your electrical projects and circuit designs",
+      rating: 4.9,
+      views: 980
+    },
+    {
+      title: "ECE Professional",
+      department: "Electronics & Communication (ECE)",
+      description: "Highlight your communication systems and embedded projects",
+      rating: 4.7,
+      views: 1100
+    },
+    {
+      title: "Advanced Mechanical",
+      department: "Mechanical Engineering",
+      description: "Advanced template with CAD integration and simulation results",
+      rating: 4.9,
+      views: 890
+    },
+    {
+      title: "Power Systems EEE",
+      department: "Electrical Engineering (EEE)",
+      description: "Specialized for power systems and renewable energy projects",
+      rating: 4.6,
+      views: 750
+    },
+    {
+      title: "Signal Processing ECE",
+      department: "Electronics & Communication (ECE)",
+      description: "Perfect for DSP and signal processing portfolios",
+      rating: 4.8,
+      views: 820
+    }
+  ];
+
+  const recentActivity = [
+    { action: "Updated profile picture", time: "2 hours ago" },
+    { action: "Added new project: Smart Home System", time: "1 day ago" },
+    { action: "Received review from John Doe", time: "2 days ago" },
+    { action: "Completed AI portfolio optimization", time: "3 days ago" },
+    { action: "Published new template customization", time: "5 days ago" }
+  ];
+
+  const filteredTemplates = templates.filter(template => 
+    selectedDepartment === "all" || template.department === selectedDepartment
+  );
+
+  const handleAiSend = () => {
+    if (!aiMessage.trim()) return;
+    
+    setAiChat([...aiChat, 
+      { role: "user", content: aiMessage },
+      { role: "assistant", content: "That's a great question! I can help you with that. Let me suggest some improvements for your portfolio..." }
+    ]);
+    setAiMessage("");
+  };
 
   const sidebarItems = [
     { id: "profile", label: "Profile", icon: User },
@@ -103,6 +180,8 @@ const Dashboard = () => {
               <Input
                 placeholder="Search profiles, projects, templates..."
                 className="pl-10 py-6 glass-card"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
           </div>
@@ -161,23 +240,53 @@ const Dashboard = () => {
               <div>
                 <h2 className="text-2xl font-bold mb-4">Recent Projects</h2>
                 <div className="grid gap-4 md:grid-cols-2">
-                  {[1, 2, 3, 4].map((i) => (
+                  {[
+                    { name: "Smart Home Automation", rating: 4.8, reviews: 12, updated: "2 days ago" },
+                    { name: "IoT Weather Station", rating: 4.9, reviews: 18, updated: "5 days ago" },
+                    { name: "Robotic Arm Controller", rating: 4.7, reviews: 9, updated: "1 week ago" },
+                    { name: "Solar Panel Optimizer", rating: 4.6, reviews: 15, updated: "2 weeks ago" }
+                  ].map((project, i) => (
                     <Card key={i} className="glass-card hover:shadow-lg transition-all hover:-translate-y-1">
                       <CardHeader>
-                        <CardTitle>Project {i}</CardTitle>
-                        <CardDescription>Updated 2 days ago</CardDescription>
+                        <CardTitle>{project.name}</CardTitle>
+                        <CardDescription>Updated {project.updated}</CardDescription>
                       </CardHeader>
                       <CardContent>
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />
-                            <span className="text-sm">4.8 (12 reviews)</span>
+                            <span className="text-sm">{project.rating} ({project.reviews} reviews)</span>
                           </div>
                           <Button variant="outline" size="sm">View</Button>
                         </div>
                       </CardContent>
                     </Card>
                   ))}
+                </div>
+              </div>
+
+              {/* Reviews Section */}
+              <div>
+                <h2 className="text-2xl font-bold mb-4">Recent Reviews</h2>
+                <div className="space-y-4">
+                  <ReviewCard
+                    reviewer="Sarah Johnson"
+                    rating={5}
+                    comment="Excellent portfolio! The projects are well-documented and impressive."
+                    date="2 days ago"
+                  />
+                  <ReviewCard
+                    reviewer="Michael Chen"
+                    rating={4}
+                    comment="Great work on the robotic arm project. Would love to see more details on the control system."
+                    date="5 days ago"
+                  />
+                  <ReviewCard
+                    reviewer="Emily Davis"
+                    rating={5}
+                    comment="Very professional presentation. The IoT project is particularly innovative!"
+                    date="1 week ago"
+                  />
                 </div>
               </div>
             </div>
@@ -191,22 +300,23 @@ const Dashboard = () => {
                 <p className="text-muted-foreground">Choose from our professional templates</p>
               </div>
 
-              {/* Department Categories */}
-              <div className="grid gap-6 md:grid-cols-3">
-                {["Electrical Engineering (EEE)", "Electronics & Communication (ECE)", "Mechanical Engineering"].map((dept) => (
-                  <Card key={dept} className="glass-card hover:shadow-lg transition-all hover:-translate-y-2 cursor-pointer">
-                    <CardHeader>
-                      <CardTitle>{dept}</CardTitle>
-                      <CardDescription>12 templates available</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <Button className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90">
-                        Browse Templates
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+              {/* Department Filter */}
+              <Tabs value={selectedDepartment} onValueChange={setSelectedDepartment} className="w-full">
+                <TabsList className="grid w-full grid-cols-4 glass-card">
+                  <TabsTrigger value="all">All</TabsTrigger>
+                  <TabsTrigger value="Mechanical Engineering">Mechanical</TabsTrigger>
+                  <TabsTrigger value="Electrical Engineering (EEE)">EEE</TabsTrigger>
+                  <TabsTrigger value="Electronics & Communication (ECE)">ECE</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value={selectedDepartment} className="mt-8">
+                  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    {filteredTemplates.map((template, index) => (
+                      <TemplateCard key={index} {...template} />
+                    ))}
+                  </div>
+                </TabsContent>
+              </Tabs>
             </div>
           )}
 
@@ -224,10 +334,38 @@ const Dashboard = () => {
                   <CardDescription>Ask me anything about building your portfolio</CardDescription>
                 </CardHeader>
                 <CardContent>
+                  <div className="space-y-4 mb-4 max-h-96 overflow-y-auto">
+                    {aiChat.map((msg, index) => (
+                      <div
+                        key={index}
+                        className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+                      >
+                        <div
+                          className={`max-w-[80%] rounded-lg p-4 ${
+                            msg.role === "user"
+                              ? "bg-primary text-primary-foreground"
+                              : "bg-secondary"
+                          }`}
+                        >
+                          <p className="text-sm">{msg.content}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  
                   <div className="flex items-center gap-2">
-                    <Input placeholder="Ask me anything..." className="flex-1" />
-                    <Button className="bg-gradient-to-r from-primary to-accent hover:opacity-90">
-                      <MessageSquare className="h-4 w-4" />
+                    <Input 
+                      placeholder="Ask me anything..." 
+                      className="flex-1"
+                      value={aiMessage}
+                      onChange={(e) => setAiMessage(e.target.value)}
+                      onKeyPress={(e) => e.key === "Enter" && handleAiSend()}
+                    />
+                    <Button 
+                      className="bg-gradient-to-r from-primary to-accent hover:opacity-90"
+                      onClick={handleAiSend}
+                    >
+                      <Send className="h-4 w-4" />
                     </Button>
                   </div>
                 </CardContent>
@@ -275,7 +413,17 @@ const Dashboard = () => {
 
               <Card className="glass-card">
                 <CardContent className="pt-6">
-                  <p className="text-center text-muted-foreground">No recent activity</p>
+                  <div className="space-y-4">
+                    {recentActivity.map((activity, index) => (
+                      <div key={index} className="flex items-center justify-between p-4 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors">
+                        <div className="flex items-center gap-3">
+                          <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+                          <p className="font-medium">{activity.action}</p>
+                        </div>
+                        <span className="text-sm text-muted-foreground">{activity.time}</span>
+                      </div>
+                    ))}
+                  </div>
                 </CardContent>
               </Card>
             </div>

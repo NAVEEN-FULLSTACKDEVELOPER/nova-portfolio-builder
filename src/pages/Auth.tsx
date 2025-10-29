@@ -8,6 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { Sparkles } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import ParticleBackground from "@/components/ParticleBackground";
 
 const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -37,8 +38,9 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center particle-bg p-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center particle-bg p-4 relative overflow-hidden">
+      <ParticleBackground />
+      <div className="w-full max-w-md z-10">
         <Link to="/" className="flex items-center justify-center gap-2 mb-8">
           <Sparkles className="h-6 w-6 text-primary" />
           <span className="text-2xl font-bold gradient-text">PortfolioX</span>

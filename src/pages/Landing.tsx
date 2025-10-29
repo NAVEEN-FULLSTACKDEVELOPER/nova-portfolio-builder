@@ -5,6 +5,8 @@ import heroImage from "@/assets/hero-bg.jpg";
 import aiFeature from "@/assets/ai-feature.jpg";
 import portfolioFeature from "@/assets/portfolio-feature.jpg";
 import reviewFeature from "@/assets/review-feature.jpg";
+import ParticleBackground from "@/components/ParticleBackground";
+import ThreeBackground from "@/components/ThreeBackground";
 
 const Landing = () => {
   return (
@@ -35,10 +37,12 @@ const Landing = () => {
       </nav>
 
       {/* Hero Section */}
-      <section id="home" className="relative min-h-screen flex items-center justify-center particle-bg pt-20">
+      <section id="home" className="relative min-h-screen flex items-center justify-center particle-bg pt-20 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img src={heroImage} alt="Hero background" className="w-full h-full object-cover opacity-20" />
         </div>
+        <ParticleBackground />
+        <ThreeBackground />
         
         <div className="container mx-auto px-4 z-10">
           <div className="text-center max-w-4xl mx-auto animate-slide-up">
